@@ -6,6 +6,15 @@
 
 ---
 
+## 📂 プロジェクト概要
+
+- 従業員（10名程度）がサインインし、それぞれのユーザーごとにデータを入力。  
+- 入力内容はZodでバリデーション後、GASに送信。  
+- GASが受け取ったデータをスプレッドシートの対応セルに自動で貼り付ける。  
+- 別途サーバーやデータベースは不要。スプレッドシートをデータストアとして利用。  
+
+---
+
 ## 📌 使用技術スタック
 
 - **Expo（React Native）**  
@@ -23,15 +32,6 @@
 
 ---
 
-## 📂 プロジェクト概要
-
-- 従業員（10名程度）がサインインし、それぞれのユーザーごとにデータを入力。  
-- 入力内容はZodでバリデーション後、GASに送信。  
-- GASが受け取ったデータをスプレッドシートの対応セルに自動で貼り付ける。  
-- 別途サーバーやデータベースは不要。スプレッドシートをデータストアとして利用。  
-
----
-
 ## 🖥️ 開発環境
 
 - Node.js（推奨 LTS バージョン）  
@@ -41,17 +41,37 @@
 
 ---
 
+## 📁 開発アーキテクチャ（Atomic Design 採用）
+
+```
+app/
+├── (tabs)/
+│   ├── page1.tsx        # ページ1 
+|   ├── page2.tsx        # ページ2
+|  
+├── components/
+│   ├── atoms/           # 最小単位UIパーツ
+│   ├── molecules/       # 複数のAtomsを組み合わせた部品 
+|   ├── organisms/       # 複数のMoleculesを組み合わせたまとまり
+|   └── templates/       # ページレイアウトなどの大きな構造
+
+```
+
 ## 🚀 セットアップ手順
 
 1. リポジトリをクローン
    ```bash
+   SSHリンク
    git clone git@github.com:azuma0304/AutomatedBusinessTripExpenseReportGenerationApp.git
+   
+   HTTPSリンク
+   git clone https://github.com/azuma0304/AutomatedBusinessTripExpenseReportGenerationApp.git
    
 2. 依存関係をインストール
    ```
    npm install
 
-4. Expo 開発サーバーを起動
+3. Expo 開発サーバーを起動
    ```
    npx expo start
 
@@ -76,3 +96,13 @@ GAS 側のエラーハンドリング強化
 スプレッドシート構成の最適化
 
 将来的にデータベースが必要となる場合の拡張性検討
+
+---
+
+## 開発者向けオプション機能
+
+1. フォーマットの確認と整形
+
+```
+npm run lint      # 確認だけ
+npm run lint:fix  # 自動修正
