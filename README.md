@@ -106,3 +106,13 @@ GAS 側のエラーハンドリング強化
 ```
 npm run lint      # 確認だけ
 npm run lint:fix  # 自動修正
+```
+
+---
+
+## 学習メモ
+
+[学習メモ（Google Docs）](https://docs.google.com/document/d/1a0acIN1LD7O75yzaf4ZFOY72OphEyDiHez3nIDFMwFI/edit?usp=sharing)
+
+
+
