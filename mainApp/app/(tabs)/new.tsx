@@ -9,7 +9,7 @@ export default function NewScreen() {
   const handleSubmit = async () => {
     try {
       const response = await fetch(
-        "https://script.google.com/macros/s/AKfycbya3fdCS4ou-BHDWUVo2UPGXhSBj-fILR8F8JtFC6pgX3R4_RdwhzAwB0DfD8pt0Xze/exec",
+        "https://script.google.com/macros/s/AKfycbxfT71JyGw4CfTgbbCaimlXyoG2xpLBRLDbtX4DxkgkyemYAEONiFDR-gl3rxB2NQ/exec",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -23,7 +23,6 @@ export default function NewScreen() {
 
       if (data.status === "success") {
         Alert.alert("送信成功", "スプレッドシートに保存されました");
-        // console.log(data);
       } else {
         Alert.alert("エラー", "保存に失敗しました");
       }
@@ -46,3 +45,6 @@ export default function NewScreen() {
     </SafeAreaProvider>
   );
 }
+
+
+
