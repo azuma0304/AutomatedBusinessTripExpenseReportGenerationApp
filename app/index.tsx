@@ -1,4 +1,4 @@
-import { Redirect } from 'expo-router';
+import { Redirect } from "expo-router";
 
 // 初期ページをnewタブにリダイレクト
 export default function Index() {
