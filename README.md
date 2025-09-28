@@ -27,8 +27,9 @@
 - **Zod**  
   入力値バリデーションに利用。  
 
-- **Google Apps Script（GAS）**  
-  Googleスプレッドシートとの連携。API的な役割を果たす。  
+- **Google Apps Script（GAS）+ clasp**  
+  - Googleスプレッドシートとの連携。API的な役割を果たす。
+  - claspを利用してローカル環境からGASコードをpush/deploy可能。  
 
 ---
 
@@ -37,7 +38,8 @@
 - Node.js（推奨 LTS バージョン）  
 - Expo CLI  
 - TypeScript  
-- ESLint / Prettier（コード整形・静的解析用）  
+- ESLint / Prettier（コード整形・静的解析用）
+- clasp（Google Apps Script CLI ツール）  
 
 ---
 
@@ -69,7 +71,7 @@ app/
    
 2. 依存関係をインストール
    ```
-   npm install
+   npm install (GAS側とExpoアプリ側（mainApp）の2つ)
 
 3. Expo 開発サーバーを起動
    ```
@@ -96,6 +98,43 @@ GAS 側のエラーハンドリング強化
 スプレッドシート構成の最適化
 
 将来的にデータベースが必要となる場合の拡張性検討
+
+---
+
+## 開発者用
+
+依存関係のインストール（2回必要）
+
+1．Expoアプリ側（mainApp）
+
+```
+cd mainApp
+npm install
+```
+
+2. GAS側（gas）
+
+```
+cd ..
+cd gas
+npm install
+```
+
+GAS開発フロー
+
+```
+npx clasp push                    # ローカルの変更をGASへ反映
+npx clasp deploy -i <デプロイID>   # デプロイ
+```
+
+※開発中は push → deploy で十分です。
+※本番用は以下のフロー推奨：
+```
+npx clasp push
+npx clasp version "fix: xxx"
+npx clasp deploy -i <デプロイID>
+(デプロイID : AKfycbxfT71JyGw4CfTgbbCaimlXyoG2xpLBRLDbtX4DxkgkyemYAEONiFDR-gl3rxB2NQ)
+```
 
 ---
 
