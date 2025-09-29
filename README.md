@@ -71,7 +71,7 @@ app/
    
 2. 依存関係をインストール
    ```
-   npm install (GAS側とExpoアプリ側（mainApp）の2つ)
+   npm i --legacy-peer-deps  (GAS側とExpoアプリ側（mainApp）の2つ)
 
 3. Expo 開発サーバーを起動
    ```
@@ -109,7 +109,7 @@ GAS 側のエラーハンドリング強化
 
 ```
 cd mainApp
-npm install
+npm i --legacy-peer-deps 
 ```
 
 2. GAS側（gas）
