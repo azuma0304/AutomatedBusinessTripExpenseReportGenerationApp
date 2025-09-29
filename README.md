@@ -145,3 +145,15 @@ npx clasp deploy -i <デプロイID>
 ```
 npm run lint      # 確認だけ
 npm run lint:fix  # 自動修正
+```
+
+2. EASに変更をアップデート
+```
+eas update --branch main --message "bugfix"  
+```
+
+アプリケーションQR
+
+<img width="201" height="188" alt="{42C7DFBF-73ED-4384-BAE5-20CB5D76D96B}" src="https://github.com/user-attachments/assets/be94373d-896e-44e4-85dc-c3bb0634750b" />
+
+
