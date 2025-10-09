@@ -18,6 +18,9 @@ const MAPPING = {
   "paperplane.fill": "send",
   "chevron.left.forwardslash.chevron.right": "code",
   "chevron.right": "chevron-right",
+  "plus": "add",
+  "list.bullet": "list",
+  "doc.text.fill": "description", // 新しいアイコンのマッピングを追加
 } as IconMapping;
 
 /**
