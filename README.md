@@ -137,7 +137,6 @@ npx clasp version "fix: xxx"
 npx clasp deploy -i <デプロイID>
 (デプロイID : AKfycbxfT71JyGw4CfTgbbCaimlXyoG2xpLBRLDbtX4DxkgkyemYAEONiFDR-gl3rxB2NQ)
 ```
-
 ---
 
 ## 開発者向けオプション機能
