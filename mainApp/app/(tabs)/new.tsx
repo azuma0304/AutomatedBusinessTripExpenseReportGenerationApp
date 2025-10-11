@@ -1,6 +1,6 @@
 import { Button, Card, Input, Text } from "@rneui/themed";
-import { useState } from "react";
-import { Alert, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { Alert, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function NewScreen() {
@@ -14,7 +14,7 @@ export default function NewScreen() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name, 
+            name,
           }),
         },
       );
@@ -32,6 +32,8 @@ export default function NewScreen() {
     }
   };
 
+  const [showComponent, setShowComponet] = useState(false);
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -40,16 +42,16 @@ export default function NewScreen() {
             出張旅費の新規作成
           </Text>
 
-          {/* 出張先 */} 
+          {/* 出張先 */}
           <Card containerStyle={{
             marginBottom: 15,
             borderRadius: 15,
           }}>
             <Card.Title h4 style={{ fontWeight: 'bold' }}>出張先を入力してください</Card.Title>
-            <Input placeholder="例：東京都立病院"/>
+            <Input placeholder="例：東京都立病院" />
           </Card>
 
-          {/* 出張の目的 */} 
+          {/* 出張の目的 */}
           <Card containerStyle={{
             marginBottom: 15,
             borderRadius: 15,
@@ -58,7 +60,7 @@ export default function NewScreen() {
             <Input placeholder="例：サーバーエラーを修正する為" />
           </Card>
 
-          {/* 移動した日付と詳細情報の入力 */} 
+          {/* 移動した日付と詳細情報の入力 */}
           <Card containerStyle={{
             marginBottom: 15,
             borderRadius: 15,
@@ -67,7 +69,34 @@ export default function NewScreen() {
             <Text style={{ color: "red", textAlign: "center", textDecorationLine: "underline", marginBottom: 5 }}>
               公共交通機関及び飛行機を利用した場合
             </Text>
-            <Button title="+ 公共交通機関の情報を追加" buttonStyle={{ backgroundColor: "green", marginBottom: 10 }} />
+
+            {/* 「公共交通機関及び飛行機を利用した場合」をクリックしたときに出てくる */}
+            {showComponent &&             
+            <Card containerStyle={{
+              marginBottom: 10,
+              borderRadius: 10,
+              backgroundColor: "pink",
+              borderColor: "red",
+            }}>
+              <Text
+                onPress={() => setShowComponet(false)}
+                style={{ fontSize: 18, color: "red", alignSelf: "flex-end" }}
+              >
+                ✕
+              </Text>
+              
+              <Card.Title style={{ fontWeight: 'bold' }}>日付を選択してください</Card.Title>
+            </Card>}
+
+            <Button
+              title="+ 公共交通機関の情報を追加"
+              buttonStyle={{ backgroundColor: "green", marginBottom: 10 }}
+              onPress={() => setShowComponet(true)}
+            />
+
+
+
+
             <Text style={{ color: "green", textAlign: "center", textDecorationLine: "underline", marginBottom: 5 }}>
               レンタカーまたは自家用車を利用した場合
             </Text>
@@ -78,7 +107,7 @@ export default function NewScreen() {
             <Button title="+ 移動手段の情報を追加" buttonStyle={{ backgroundColor: "green" }} />
           </Card>
 
-          {/* 日当区分及び宿泊日数の入力 */} 
+          {/* 日当区分及び宿泊日数の入力 */}
           <Card containerStyle={{
             marginBottom: 15,
             borderRadius: 15,
@@ -87,7 +116,7 @@ export default function NewScreen() {
             <Button title="+ 日当区分を追加" buttonStyle={{ backgroundColor: "green" }} />
           </Card>
 
-          {/* 宿泊区分及び日数を入力 */} 
+          {/* 宿泊区分及び日数を入力 */}
           <Card containerStyle={{
             marginBottom: 15,
             borderRadius: 15,
@@ -96,7 +125,7 @@ export default function NewScreen() {
             <Button title="+ 省泊区分を追加" buttonStyle={{ backgroundColor: "green" }} />
           </Card>
 
-          {/* 領収書の添付 */} 
+          {/* 領収書の添付 */}
           <Card containerStyle={{
             marginBottom: 15,
             borderRadius: 15,
@@ -106,7 +135,7 @@ export default function NewScreen() {
             <Button title="+ 写真フォルダから選択" buttonStyle={{ backgroundColor: "black" }} />
           </Card>
 
-          {/* 最終確認と一時保存ボタン */} 
+          {/* 最終確認と一時保存ボタン */}
           <Button title="最終確認" buttonStyle={{ backgroundColor: "red", marginBottom: 10 }} />
           <Button title="一時保存" buttonStyle={{ backgroundColor: "cornflowerblue" }} />
         </ScrollView>
