@@ -2,6 +2,8 @@ import { Button, Card, Input, Text } from "@rneui/themed";
 import React, { useState } from "react";
 import { Alert, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import AddPublicTransportButton from "../components/add-poblic-transport-button";
+import { PublicWebTransportDetailInput } from "../components/public-transport-detail-input";
 
 export default function NewScreen() {
   const [name, setName] = useState<string>("");
@@ -32,7 +34,11 @@ export default function NewScreen() {
     }
   };
 
-  const [showComponent, setShowComponet] = useState(false);
+  const [publicTransportItem, setPublicTransportItem] = useState<number[]>([]);
+
+  const handleAddPublicTransportItem = () => {
+    setPublicTransportItem([...publicTransportItem, publicTransportItem.length]);
+  };
 
   return (
     <SafeAreaProvider>
@@ -70,29 +76,14 @@ export default function NewScreen() {
               公共交通機関及び飛行機を利用した場合
             </Text>
 
-            {/* 「公共交通機関及び飛行機を利用した場合」をクリックしたときに出てくる */}
-            {showComponent &&             
-            <Card containerStyle={{
-              marginBottom: 10,
-              borderRadius: 10,
-              backgroundColor: "pink",
-              borderColor: "red",
-            }}>
-              <Text
-                onPress={() => setShowComponet(false)}
-                style={{ fontSize: 18, color: "red", alignSelf: "flex-end" }}
-              >
-                ✕
-              </Text>
-              
-              <Card.Title style={{ fontWeight: 'bold' }}>日付を選択してください</Card.Title>
-            </Card>}
+            {/* 「公共交通機関及び飛行機を利用した場合」カード */}
+            <AddPublicTransportButton handleAddPublicTransportItem={handleAddPublicTransportItem} />
 
-            <Button
-              title="+ 公共交通機関の情報を追加"
-              buttonStyle={{ backgroundColor: "green", marginBottom: 10 }}
-              onPress={() => setShowComponet(true)}
-            />
+            {/* 公共交通機関の詳細入力コンポーネントを表示 */}
+            {publicTransportItem.map((_, index) => (
+              <PublicWebTransportDetailInput key={index} />
+            ))}
+
 
 
 
