@@ -155,6 +155,6 @@ eas update --branch main --message "bugfix"
 
 アプリケーションQR
 
-<img width="201" height="188" alt="{42C7DFBF-73ED-4384-BAE5-20CB5D76D96B}" src="https://github.com/user-attachments/assets/be94373d-896e-44e4-85dc-c3bb0634750b" />
+<img width="201" height="188" alt="{996EB3B6-5931-4A0E-AF31-FFCD812F21A9}" src="https://github.com/user-attachments/assets/1920605e-9388-4573-82e7-f893ab76bc46" />
 
 
