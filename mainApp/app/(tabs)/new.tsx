@@ -2,8 +2,29 @@ import { Button, Card, Input, Text } from "@rneui/themed";
 import React, { useState } from "react";
 import { Alert, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import AddPublicTransportButton from "../components/add-poblic-transport-button";
-import { PublicWebTransportDetailInput } from "../components/public-transport-detail-input";
+// Atoms
+import AddPublicTransportButton from "../components/atoms/add-public-transport-button";
+import AddCarUsageButton from "../components/atoms/add-car-usage-button";
+import AddOtherTransportButton from "../components/atoms/add-other-transport-button";
+import AddDailyAllowanceButton from "../components/atoms/add-daily-allowance-button";
+import AddLodgingButton from "../components/atoms/add-lodging-button";
+import SubmitConfirmationButton from "../components/atoms/submit-confirmation-button";
+import DraftSaveButton from "../components/atoms/draft-save-button";
+
+// Molecules
+import PublicWebTransportDetailInput from "../components/molecules/public-transport-detail-input";
+import BusinessDestinationInput from "../components/molecules/business-destination-input";
+import BusinessPurposeInput from "../components/molecules/business-purpose-input";
+import CarUsageDetailInput from "../components/molecules/car-usage-detail-input";
+import OtherTransportDetailInput from "../components/molecules/other-transport-detail-input";
+import DailyAllowanceDetailInput from "../components/molecules/daily-allowance-detail-input";
+import LodgingDetailInput from "../components/molecules/lodging-detail-input";
+import ReceiptInput from "../components/molecules/receipt-input";
+
+// Organisms
+import TravelDetailInput from "../components/organisms/travel-detail-input";
+import DailyAllowanceInput from "../components/organisms/daily-allowance-input";
+import LodgingInput from "../components/organisms/lodging-input";
 
 export default function NewScreen() {
   const [name, setName] = useState<string>("");
@@ -34,11 +55,51 @@ export default function NewScreen() {
     }
   };
 
-  const [publicTransportItem, setPublicTransportItem] = useState<number[]>([]);
+  const [publicTransportEntryIds, setPublicTransportEntryIds] = useState<number[]>([]);
+  const [carUsageEntryIds, setCarUsageEntryIds] = useState<number[]>([]);
+  const [otherTransportEntryIds, setOtherTransportEntryIds] = useState<number[]>([]);
+  const [dailyAllowanceEntryIds, setDailyAllowanceEntryIds] = useState<number[]>([]);
+  const [lodgingEntryIds, setLodgingEntryIds] = useState<number[]>([]);
 
   const handleAddPublicTransportItem = () => {
-    setPublicTransportItem([...publicTransportItem, publicTransportItem.length]);
+    setPublicTransportEntryIds([...publicTransportEntryIds, publicTransportEntryIds.length]);
   };
+
+  const handleAddCarUsageItem = () => {
+    setCarUsageEntryIds([...carUsageEntryIds, carUsageEntryIds.length]);
+  };
+
+  const handleAddOtherTransportItem = () => {
+    setOtherTransportEntryIds([...otherTransportEntryIds, otherTransportEntryIds.length]);
+  };
+
+  const handleAddDailyAllowanceItem = () => {
+    setDailyAllowanceEntryIds([...dailyAllowanceEntryIds, dailyAllowanceEntryIds.length]);
+  };
+
+  const handleAddLodgingItem = () => {
+    setLodgingEntryIds([...lodgingEntryIds, lodgingEntryIds.length]);
+  };
+
+  const removePublicTranceportItem = (indexToRemove: number) => {
+    setPublicTransportEntryIds(publicTransportEntryIds.filter((_, index) => index !== indexToRemove));
+  }
+
+  const removeCarUsageItem = (indexToRemove: number) => {
+    setCarUsageEntryIds(carUsageEntryIds.filter((_, index) => index != indexToRemove));
+  }
+
+  const removeOtherTransportItem = (indexToRemove: number) => {
+    setOtherTransportEntryIds(otherTransportEntryIds.filter((_, index) => index != indexToRemove));
+  }
+
+  const removeDailyAllowanceItem = (indexToRemove: number) => {
+    setDailyAllowanceEntryIds(dailyAllowanceEntryIds.filter((_, index) => index != indexToRemove));
+  }
+
+  const removeLodgingItem = (indexToRemove: number) => {
+    setLodgingEntryIds(lodgingEntryIds.filter((_, index) => index != indexToRemove));
+  }
 
   return (
     <SafeAreaProvider>
@@ -49,86 +110,45 @@ export default function NewScreen() {
           </Text>
 
           {/* 出張先 */}
-          <Card containerStyle={{
-            marginBottom: 15,
-            borderRadius: 15,
-          }}>
-            <Card.Title h4 style={{ fontWeight: 'bold' }}>出張先を入力してください</Card.Title>
-            <Input placeholder="例：東京都立病院" />
-          </Card>
+          <BusinessDestinationInput />
 
           {/* 出張の目的 */}
-          <Card containerStyle={{
-            marginBottom: 15,
-            borderRadius: 15,
-          }}>
-            <Card.Title h4 style={{ fontWeight: 'bold' }}>出張の目的を入力してください</Card.Title>
-            <Input placeholder="例：サーバーエラーを修正する為" />
-          </Card>
+          <BusinessPurposeInput />
+
 
           {/* 移動した日付と詳細情報の入力 */}
-          <Card containerStyle={{
-            marginBottom: 15,
-            borderRadius: 15,
-          }}>
-            <Card.Title h4 style={{ fontWeight: 'bold' }}>移動した日付と詳細情報の入力</Card.Title>
-            <Text style={{ color: "red", textAlign: "center", textDecorationLine: "underline", marginBottom: 5 }}>
-              公共交通機関及び飛行機を利用した場合
-            </Text>
-
-            {/* 「公共交通機関及び飛行機を利用した場合」カード */}
-            <AddPublicTransportButton handleAddPublicTransportItem={handleAddPublicTransportItem} />
-
-            {/* 公共交通機関の詳細入力コンポーネントを表示 */}
-            {publicTransportItem.map((_, index) => (
-              <PublicWebTransportDetailInput key={index} />
-            ))}
-
-
-
-
-
-            <Text style={{ color: "green", textAlign: "center", textDecorationLine: "underline", marginBottom: 5 }}>
-              レンタカーまたは自家用車を利用した場合
-            </Text>
-            <Button title="+ 車両利用の情報を追加" buttonStyle={{ backgroundColor: "green", marginBottom: 10 }} />
-            <Text style={{ color: "black", textAlign: "center", textDecorationLine: "underline", marginBottom: 5 }}>
-              その他
-            </Text>
-            <Button title="+ 移動手段の情報を追加" buttonStyle={{ backgroundColor: "green" }} />
-          </Card>
+          <TravelDetailInput
+            publicTransportEntryIds={publicTransportEntryIds}
+            carUsageEntryIds={carUsageEntryIds}
+            otherTransportEntryIds={otherTransportEntryIds}
+            handleAddPublicTransportItem={handleAddPublicTransportItem}
+            handleAddCarUsageItem={handleAddCarUsageItem}
+            handleAddOtherTransportItem={handleAddOtherTransportItem}
+            removePublicTranceportItem={removePublicTranceportItem}
+            removeCarUsageItem={removeCarUsageItem}
+            removeOtherTransportItem={removeOtherTransportItem}
+          />
 
           {/* 日当区分及び宿泊日数の入力 */}
-          <Card containerStyle={{
-            marginBottom: 15,
-            borderRadius: 15,
-          }}>
-            <Card.Title h4 style={{ fontWeight: 'bold' }}>日当区分及び宿泊日数の入力</Card.Title>
-            <Button title="+ 日当区分を追加" buttonStyle={{ backgroundColor: "green" }} />
-          </Card>
+          <DailyAllowanceInput 
+            dailyAllowanceEntryIds={dailyAllowanceEntryIds}
+            handleAddDailyAllowanceItem={handleAddDailyAllowanceItem}
+            removeDailyAllowanceItem={removeDailyAllowanceItem}
+          />
 
           {/* 宿泊区分及び日数を入力 */}
-          <Card containerStyle={{
-            marginBottom: 15,
-            borderRadius: 15,
-          }}>
-            <Card.Title h4 style={{ fontWeight: 'bold' }}>宿泊区分及び日数を入力</Card.Title>
-            <Button title="+ 省泊区分を追加" buttonStyle={{ backgroundColor: "green" }} />
-          </Card>
+          <LodgingInput 
+            lodgingEntryIds={lodgingEntryIds}
+            handleAddLodgingItem={handleAddLodgingItem}
+            removeLodgingItem={removeLodgingItem}
+          />
 
           {/* 領収書の添付 */}
-          <Card containerStyle={{
-            marginBottom: 15,
-            borderRadius: 15,
-          }}>
-            <Card.Title h4 style={{ fontWeight: 'bold' }}>領収書の添付</Card.Title>
-            <Button title="+ カメラを起動" buttonStyle={{ backgroundColor: "green", marginBottom: 10 }} />
-            <Button title="+ 写真フォルダから選択" buttonStyle={{ backgroundColor: "black" }} />
-          </Card>
+          <ReceiptInput/>
 
           {/* 最終確認と一時保存ボタン */}
-          <Button title="最終確認" buttonStyle={{ backgroundColor: "red", marginBottom: 10 }} />
-          <Button title="一時保存" buttonStyle={{ backgroundColor: "cornflowerblue" }} />
+          <SubmitConfirmationButton/>
+          <DraftSaveButton/>
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
