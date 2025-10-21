@@ -5,14 +5,20 @@ import AddDailyAllowanceButton from '../atoms/add-daily-allowance-button'
 
 interface DailyAllowanceInputProps {
     dailyAllowanceEntryIds: number[];
+    dailyAllowanceDetails: any[];
     handleAddDailyAllowanceItem: () => void;
     removeDailyAllowanceItem: (indexToRemove: number) => void;
+    handleDailyAllowanceChange: (index: number, value: any) => void;
+    detailErrors: { [key: string]: { [key: string]: string } };
 }
 
 const DailyAllowanceInput: React.FC<DailyAllowanceInputProps> = ({
     dailyAllowanceEntryIds,
+    dailyAllowanceDetails,
     handleAddDailyAllowanceItem,
-    removeDailyAllowanceItem
+    removeDailyAllowanceItem,
+    handleDailyAllowanceChange,
+    detailErrors
 }) => {
   return (
     <>
@@ -25,6 +31,9 @@ const DailyAllowanceInput: React.FC<DailyAllowanceInputProps> = ({
           <DailyAllowanceDetailInput
             key={index}
             onRemove={() => removeDailyAllowanceItem(index)}
+            value={dailyAllowanceDetails[index]}
+            onChange={(value) => handleDailyAllowanceChange(index, value)}
+            error={detailErrors.dailyAllowance?.[index]}
           />
         ))}
         <AddDailyAllowanceButton handleAddDailyAllowanceItem={handleAddDailyAllowanceItem} />
