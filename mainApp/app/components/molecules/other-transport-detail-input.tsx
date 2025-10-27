@@ -1,8 +1,9 @@
 import { Card, Text, Input, Button } from '@rneui/themed';
 import React, { useState, useEffect } from 'react'
-import { TouchableOpacity, View, Modal, FlatList } from 'react-native';
+import { TouchableOpacity, View, Modal, FlatList, ScrollView } from 'react-native';
 import { OtherTransportDetailSchema } from '../../../schemas/user-schema';
 import { z } from 'zod';
+import { OTHER_TRANSPORT_METHODS, BACKGROUND_COLORS, BORDER_COLORS, TEXT_COLORS, FONT_SIZES, SPACING, BORDER_RADIUS } from '../../constants';
 
 interface OtherTransportDetailInputProps {
     onRemove: () => void;
@@ -27,20 +28,66 @@ const OtherTransportDetailInput: React.FC<OtherTransportDetailInputProps> = ({
 
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
+    const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+    const [selectedDate, setSelectedDate] = useState<Date>(formData.date ? new Date(formData.date) : new Date());
 
-    // 初期バリデーション実行
+    // 初回マウント時と初期値設定時の処理
+    const [isInitialized, setIsInitialized] = useState(false);
+    
+    // 初回マウント時のバリデーション
     useEffect(() => {
         validateField(formData);
     }, []);
+    
+    // valueが変更された場合にformDataを初期化（初回のみ）
+    useEffect(() => {
+        if (value && !isInitialized) {
+            const newFormData = {
+                date: value.date || '',
+                transportMethod: value.transportMethod || '',
+                departure: value.departure || '',
+                arrival: value.arrival || '',
+                totalAmount: value.totalAmount || '',
+            };
+            setFormData(newFormData);
+            validateField(newFormData);
+            setIsInitialized(true);
+        }
+    }, [value, isInitialized]);
 
-    const transportMethods = [
-        'タクシー',
-        'バス',
-        '電車',
-        '飛行機',
-        '船',
-        'その他'
-    ];
+    const transportMethods = OTHER_TRANSPORT_METHODS;
+
+    // 日付を文字列にフォーマット
+    const formatDate = (date: Date): string => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}/${month}/${day}`;
+    };
+
+    const showDatePickerModal = () => {
+        setShowDatePicker(true);
+    };
+
+    const confirmDate = () => {
+        const formattedDate = formatDate(selectedDate);
+        handleInputChange('date', formattedDate);
+        setShowDatePicker(false);
+    };
+
+    // 年、月、日の選択肢を生成
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 5 }, (_, i) => currentYear + i);
+    const months = Array.from({ length: 12 }, (_, i) => i + 1);
+    const days = Array.from({ length: 31 }, (_, i) => i + 1);
+
+    const updateDate = (year?: number, month?: number, day?: number) => {
+        const newDate = new Date(selectedDate);
+        if (year !== undefined) newDate.setFullYear(year);
+        if (month !== undefined) newDate.setMonth(month - 1);
+        if (day !== undefined) newDate.setDate(day);
+        setSelectedDate(newDate);
+    };
 
     // リアルタイムバリデーション関数
     const validateField = (data: any) => {
@@ -120,22 +167,123 @@ const OtherTransportDetailInput: React.FC<OtherTransportDetailInputProps> = ({
                 <Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 5 }}>
                     日付を選択してください
                 </Text>
-                <Input
-                    placeholder="例 : 2025/05/06"
-                    value={formData.date}
-                    onChangeText={(text) => handleInputChange('date', text)}
-                    containerStyle={{ marginBottom: 15 }}
-                    inputContainerStyle={{
-                        backgroundColor: validationErrors.date ? "#ffe6e6" : "white",
-                        borderWidth: 1,
-                        borderColor: validationErrors.date ? "red" : "#ddd",
-                        borderRadius: 8,
-                        paddingHorizontal: 10
-                    }}
-                    inputStyle={{ 
-                        paddingHorizontal: 10
-                    }}
-                />
+                <TouchableOpacity onPress={showDatePickerModal}>
+                    <Input
+                        placeholder="例 : 2025/05/06"
+                        value={formData.date}
+                        editable={false}
+                        containerStyle={{ marginBottom: 15 }}
+                        inputContainerStyle={{
+                            backgroundColor: validationErrors.date ? "#ffe6e6" : "white",
+                            borderWidth: 1,
+                            borderColor: validationErrors.date ? "red" : "#ddd",
+                            borderRadius: 8,
+                            paddingHorizontal: 10
+                        }}
+                        inputStyle={{ 
+                            paddingHorizontal: 10,
+                            color: formData.date ? '#000' : '#999'
+                        }}
+                        rightIcon={{
+                            name: 'calendar',
+                            type: 'font-awesome',
+                            color: '#666'
+                        }}
+                    />
+                </TouchableOpacity>
+
+                {showDatePicker && (
+                    <Modal
+                        visible={showDatePicker}
+                        transparent={true}
+                        animationType="slide"
+                    >
+                        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
+                            <Card containerStyle={{ width: '90%', borderRadius: 15, maxHeight: '80%' }}>
+                                <Card.Title h4>日付を選択</Card.Title>
+                                
+                                <ScrollView style={{ maxHeight: 300 }}>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 20 }}>
+                                        <View style={{ flex: 1, marginRight: 10 }}>
+                                            <Text style={{ textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }}>年</Text>
+                                            <ScrollView style={{ height: 150 }}>
+                                                {years.map(year => (
+                                                    <TouchableOpacity
+                                                        key={year}
+                                                        onPress={() => updateDate(year)}
+                                                        style={{
+                                                            padding: 10,
+                                                            backgroundColor: selectedDate.getFullYear() === year ? '#e3f2fd' : 'transparent',
+                                                            borderRadius: 5,
+                                                            marginBottom: 2
+                                                        }}
+                                                    >
+                                                        <Text style={{ textAlign: 'center' }}>{year}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </ScrollView>
+                                        </View>
+                                        
+                                        <View style={{ flex: 1, marginRight: 10 }}>
+                                            <Text style={{ textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }}>月</Text>
+                                            <ScrollView style={{ height: 150 }}>
+                                                {months.map(month => (
+                                                    <TouchableOpacity
+                                                        key={month}
+                                                        onPress={() => updateDate(undefined, month)}
+                                                        style={{
+                                                            padding: 10,
+                                                            backgroundColor: selectedDate.getMonth() + 1 === month ? '#e3f2fd' : 'transparent',
+                                                            borderRadius: 5,
+                                                            marginBottom: 2
+                                                        }}
+                                                    >
+                                                        <Text style={{ textAlign: 'center' }}>{month}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </ScrollView>
+                                        </View>
+                                        
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={{ textAlign: 'center', marginBottom: 10, fontWeight: 'bold' }}>日</Text>
+                                            <ScrollView style={{ height: 150 }}>
+                                                {days.map(day => (
+                                                    <TouchableOpacity
+                                                        key={day}
+                                                        onPress={() => updateDate(undefined, undefined, day)}
+                                                        style={{
+                                                            padding: 10,
+                                                            backgroundColor: selectedDate.getDate() === day ? '#e3f2fd' : 'transparent',
+                                                            borderRadius: 5,
+                                                            marginBottom: 2
+                                                        }}
+                                                    >
+                                                        <Text style={{ textAlign: 'center' }}>{day}</Text>
+                                                    </TouchableOpacity>
+                                                ))}
+                                            </ScrollView>
+                                        </View>
+                                    </View>
+                                </ScrollView>
+                                
+                                <Text style={{ textAlign: 'center', fontSize: 18, marginBottom: 20, fontWeight: 'bold' }}>
+                                    {formatDate(selectedDate)}
+                                </Text>
+                                
+                                <Button
+                                    title="確定"
+                                    onPress={confirmDate}
+                                    buttonStyle={{ backgroundColor: 'red', marginBottom: 10 }}
+                                />
+                                <Button
+                                    title="キャンセル"
+                                    onPress={() => setShowDatePicker(false)}
+                                    buttonStyle={{ backgroundColor: 'gray' }}
+                                />
+                            </Card>
+                        </View>
+                    </Modal>
+                )}
                 {validationErrors.date && (
                     <Text style={{ 
                         color: "red", 

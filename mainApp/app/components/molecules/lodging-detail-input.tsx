@@ -1,7 +1,8 @@
-import { Card, Text, Input } from '@rneui/themed'
+import { Card, Text } from '@rneui/themed'
 import React, { useState, useEffect } from 'react'
 import { TouchableOpacity, View, Modal, FlatList } from 'react-native'
 import { LodgingDetailSchema } from '../../../schemas/user-schema'
+import { LODGING_CATEGORY_LIST, BACKGROUND_COLORS, BORDER_COLORS, TEXT_COLORS, FONT_SIZES, SPACING, BORDER_RADIUS } from '../../constants'
 import { z } from 'zod'
 
 interface LodgingDetailInputProps {
@@ -11,27 +12,18 @@ interface LodgingDetailInputProps {
     error?: string;
 }
 
-const LodgingDetailInput: React.FC<LodgingDetailInputProps> = ({ 
-    onRemove, 
-    value, 
-    onChange, 
-    error 
+const LodgingDetailInput: React.FC<LodgingDetailInputProps> = ({
+    onRemove,
+    value,
+    onChange,
+    error
 }) => {
     const [formData, setFormData] = useState({
         lodgingCategory: value?.lodgingCategory || '',
-        numberOfDays: value?.numberOfDays || '',
     });
 
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
-
-    const lodgingCategories = [
-        'ホテル',
-        '旅館',
-        '民宿',
-        'ビジネスホテル',
-        'その他'
-    ];
 
     // リアルタイムバリデーション関数
     const validateField = (data: any) => {
@@ -51,22 +43,25 @@ const LodgingDetailInput: React.FC<LodgingDetailInputProps> = ({
         }
     };
 
-    // 初期バリデーション実行
+    // 初回マウント時と初期値設定時の処理
+    const [isInitialized, setIsInitialized] = useState(false);
+    
+    // 初回マウント時のバリデーション
     useEffect(() => {
         validateField(formData);
     }, []);
-
-    const handleInputChange = (field: string, value: string) => {
-        const newFormData = {
-            ...formData,
-            [field]: value
-        };
-        setFormData(newFormData);
-        onChange?.(newFormData);
-        
-        // リアルタイムバリデーション実行
-        validateField(newFormData);
-    };
+    
+    // valueが変更された場合にformDataを初期化（初回のみ）
+    useEffect(() => {
+        if (value && !isInitialized) {
+            const newFormData = {
+                lodgingCategory: value.lodgingCategory || '',
+            };
+            setFormData(newFormData);
+            validateField(newFormData);
+            setIsInitialized(true);
+        }
+    }, [value, isInitialized]);
 
     const handleLodgingCategorySelect = (category: string) => {
         const newFormData = {
@@ -76,7 +71,7 @@ const LodgingDetailInput: React.FC<LodgingDetailInputProps> = ({
         setFormData(newFormData);
         onChange?.(newFormData);
         setIsDropdownVisible(false);
-        
+
         // リアルタイムバリデーション実行
         validateField(newFormData);
     };
@@ -97,9 +92,9 @@ const LodgingDetailInput: React.FC<LodgingDetailInputProps> = ({
 
                 {/* エラー表示 */}
                 {error && (
-                    <Text style={{ 
-                        color: "red", 
-                        fontSize: 12, 
+                    <Text style={{
+                        color: "red",
+                        fontSize: 12,
                         marginBottom: 10,
                         textAlign: "center"
                     }}>
@@ -132,9 +127,9 @@ const LodgingDetailInput: React.FC<LodgingDetailInputProps> = ({
                     <Text style={{ fontSize: 16, color: "#666" }}>▼</Text>
                 </TouchableOpacity>
                 {validationErrors.lodgingCategory && (
-                    <Text style={{ 
-                        color: "red", 
-                        fontSize: 12, 
+                    <Text style={{
+                        color: "red",
+                        fontSize: 12,
                         marginTop: 5,
                         marginLeft: 10,
                         marginBottom: 15
@@ -170,7 +165,7 @@ const LodgingDetailInput: React.FC<LodgingDetailInputProps> = ({
                             }}
                         >
                             <FlatList
-                                data={lodgingCategories}
+                                data={LODGING_CATEGORY_LIST}
                                 keyExtractor={(item) => item}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity
@@ -188,39 +183,6 @@ const LodgingDetailInput: React.FC<LodgingDetailInputProps> = ({
                         </View>
                     </TouchableOpacity>
                 </Modal>
-
-                {/* 日数入力 */}
-                <Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 5 }}>
-                    日数を入力してください
-                </Text>
-                <Input
-                    placeholder="例: 2"
-                    value={formData.numberOfDays}
-                    onChangeText={(text) => handleInputChange('numberOfDays', text)}
-                    containerStyle={{ marginBottom: 0 }}
-                    inputContainerStyle={{
-                        backgroundColor: validationErrors.numberOfDays ? "#ffe6e6" : "white",
-                        borderWidth: 1,
-                        borderColor: validationErrors.numberOfDays ? "red" : "#ddd",
-                        borderRadius: 8,
-                        paddingHorizontal: 10
-                    }}
-                    inputStyle={{ 
-                        paddingHorizontal: 10
-                    }}
-                    keyboardType="numeric"
-                />
-                {validationErrors.numberOfDays && (
-                    <Text style={{ 
-                        color: "red", 
-                        fontSize: 12, 
-                        marginTop: -15,
-                        marginLeft: 10,
-                        marginBottom: 15
-                    }}>
-                        {validationErrors.numberOfDays}
-                    </Text>
-                )}
             </Card>
         </>
     )

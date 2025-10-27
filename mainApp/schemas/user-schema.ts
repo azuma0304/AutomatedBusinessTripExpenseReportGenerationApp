@@ -6,6 +6,12 @@ export const DestinationSchema = z.string().min(1, '※出張先を入力して�
 // 出張目的入力欄スキーマ
 export const PurposeSchema = z.string().min(1, '※出張の目的を入力してください');
 
+// 出発日入力欄スキーマ
+export const DepartureDateSchema = z.string().min(1, '※出発日を選択してください');
+
+// 帰着日入力欄スキーマ
+export const ReturnDateSchema = z.string().min(1, '※帰着日を選択してください');
+
 // 公共交通機関の詳細スキーマ
 export const PublicTransportDetailSchema = z.object({
   date: z.string().min(1, '※日付を選択してください'),
@@ -108,29 +114,19 @@ export const OtherTransportDetailSchema = z.object({
 // 日当区分の詳細スキーマ
 export const DailyAllowanceDetailSchema = z.object({
   dailyAllowanceCategory: z.string().min(1, '※日当区分を選択してください'),
-  numberOfDays: z.string()
-    .min(1, '※日数を入力してください')
-    .refine(
-      (val) => val === '' || (!isNaN(Number(val)) && Number(val) > 0),
-      '※有効な日数を入力してください'
-    ),
 });
 
 // 宿泊の詳細スキーマ
 export const LodgingDetailSchema = z.object({
   lodgingCategory: z.string().min(1, '※宿泊区分を選択してください'),
-  numberOfDays: z.string()
-    .min(1, '※日数を入力してください')
-    .refine(
-      (val) => val === '' || (!isNaN(Number(val)) && Number(val) > 0),
-      '※有効な日数を入力してください'
-    ),
 });
 
 // メインの出張旅費書スキーマ
 export const TravelExpenseFormSchema = z.object({
   destination: DestinationSchema,
   purpose: PurposeSchema,
+  departureDate: DepartureDateSchema,
+  returnDate: ReturnDateSchema,
   publicTransportDetails: z.array(PublicTransportDetailSchema).optional(),
   carUsageDetails: z.array(CarUsageDetailSchema).optional(),
   otherTransportDetails: z.array(OtherTransportDetailSchema).optional(),

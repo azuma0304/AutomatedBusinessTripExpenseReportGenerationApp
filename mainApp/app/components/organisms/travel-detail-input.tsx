@@ -17,7 +17,7 @@ interface TravelDetailInputProps {
     handleAddPublicTransportItem: () => void;
     handleAddCarUsageItem: () => void;
     handleAddOtherTransportItem: () => void;
-    removePublicTranceportItem: (indexToRemove: number) => void;
+    removePublicTransportItem: (indexToRemove: number) => void;
     removeCarUsageItem: (indexToRemove: number) => void;
     removeOtherTransportItem: (indexToRemove: number) => void;
     handlePublicTransportChange: (index: number, value: any) => void;
@@ -36,7 +36,7 @@ const TravelDetailInput: React.FC<TravelDetailInputProps> = ({
     handleAddPublicTransportItem,
     handleAddCarUsageItem,
     handleAddOtherTransportItem,
-    removePublicTranceportItem,
+    removePublicTransportItem,
     removeCarUsageItem,
     removeOtherTransportItem,
     handlePublicTransportChange,
@@ -59,7 +59,7 @@ const TravelDetailInput: React.FC<TravelDetailInputProps> = ({
                 {publicTransportEntryIds.map((_, index) => (
                     <PublicWebTransportDetailInput
                         key={index}
-                        onRemove={() => removePublicTranceportItem(index)}
+                        onRemove={() => removePublicTransportItem(index)}
                         value={publicTransportDetails[index]}
                         onChange={(value) => handlePublicTransportChange(index, value)}
                         error={detailErrors.publicTransport?.[index]}

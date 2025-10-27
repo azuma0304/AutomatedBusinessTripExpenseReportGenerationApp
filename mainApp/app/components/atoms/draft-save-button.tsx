@@ -1,10 +1,19 @@
 import { Button } from '@rneui/base'
 import React from 'react'
+import { BUTTON_COLORS, BUTTON_TEXTS } from '../../constants'
 
-const DraftSaveButton = () => {
+interface DraftSaveButtonProps {
+  onPress: () => void;
+}
+
+const DraftSaveButton: React.FC<DraftSaveButtonProps> = ({ onPress }) => {
     return (
         <>
-            <Button title="一時保存" buttonStyle={{ backgroundColor: "cornflowerblue" }} />
+            <Button 
+              title={BUTTON_TEXTS.DRAFT_SAVE} 
+              buttonStyle={{ backgroundColor: BUTTON_COLORS.DRAFT_SAVE }} 
+              onPress={onPress}
+            />
         </>
     )
 }

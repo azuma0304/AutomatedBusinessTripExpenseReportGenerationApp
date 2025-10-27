@@ -14,6 +14,8 @@ const BusinessPurposeInput: React.FC<BusinessPurposeInputProps> = ({
     error 
 }) => {
     const [validationError, setValidationError] = useState<string>('');
+    const [inputValue, setInputValue] = useState<string>(value);
+    const previousValueRef = React.useRef<string>(value);
 
     // リアルタイムバリデーション
     const validateField = (inputValue: string) => {
@@ -29,12 +31,23 @@ const BusinessPurposeInput: React.FC<BusinessPurposeInputProps> = ({
         }
     };
 
-    // 初期バリデーション実行
+    // 初回マウント時のバリデーション
     useEffect(() => {
         validateField(value);
+        setInputValue(value);
     }, []);
 
+    // valueが変更された場合（下書き読み込み時など）、inputValueを更新
+    useEffect(() => {
+        if (value !== previousValueRef.current) {
+            previousValueRef.current = value;
+            setInputValue(value);
+            validateField(value);
+        }
+    }, [value]);
+
     const handleChange = (text: string) => {
+        setInputValue(text);
         onChange?.(text);
         validateField(text);
     };
@@ -48,7 +61,7 @@ const BusinessPurposeInput: React.FC<BusinessPurposeInputProps> = ({
                 <Card.Title h4 style={{ fontWeight: 'bold' }}>出張の目的を入力してください</Card.Title>
                 <Input 
                     placeholder="例：サーバーエラーを修正する為" 
-                    value={value}
+                    value={inputValue}
                     onChangeText={handleChange}
                     containerStyle={{ marginBottom: 0 }}
                     inputContainerStyle={{

@@ -1,8 +1,9 @@
-import { Card, Text, Input } from '@rneui/themed'
+import { Card, Text } from '@rneui/themed'
 import React, { useState, useEffect } from 'react'
 import { TouchableOpacity, View, Modal, FlatList } from 'react-native'
 import { DailyAllowanceDetailSchema } from '../../../schemas/user-schema'
 import { z } from 'zod'
+import { DAILY_ALLOWANCE_CATEGORIES, BACKGROUND_COLORS, BORDER_COLORS, TEXT_COLORS, FONT_SIZES, SPACING, BORDER_RADIUS } from '../../constants'
 
 interface DailyAllowanceDetailInputProps {
     onRemove: () => void;
@@ -19,19 +20,12 @@ const DailyAllowanceDetailInput: React.FC<DailyAllowanceDetailInputProps> = ({
 }) => {
     const [formData, setFormData] = useState({
         dailyAllowanceCategory: value?.dailyAllowanceCategory || '',
-        numberOfDays: value?.numberOfDays || '',
     });
 
     const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
 
-    const dailyAllowanceCategories = [
-        '国内出張',
-        '海外出張',
-        '特別出張',
-        '研修出張',
-        'その他'
-    ];
+    const dailyAllowanceCategories = DAILY_ALLOWANCE_CATEGORIES;
 
     // リアルタイムバリデーション関数
     const validateField = (data: any) => {
@@ -51,22 +45,25 @@ const DailyAllowanceDetailInput: React.FC<DailyAllowanceDetailInputProps> = ({
         }
     };
 
-    // 初期バリデーション実行
+    // 初回マウント時と初期値設定時の処理
+    const [isInitialized, setIsInitialized] = useState(false);
+    
+    // 初回マウント時のバリデーション
     useEffect(() => {
         validateField(formData);
     }, []);
-
-    const handleInputChange = (field: string, value: string) => {
-        const newFormData = {
-            ...formData,
-            [field]: value
-        };
-        setFormData(newFormData);
-        onChange?.(newFormData);
-        
-        // リアルタイムバリデーション実行
-        validateField(newFormData);
-    };
+    
+    // valueが変更された場合にformDataを初期化（初回のみ）
+    useEffect(() => {
+        if (value && !isInitialized) {
+            const newFormData = {
+                dailyAllowanceCategory: value.dailyAllowanceCategory || '',
+            };
+            setFormData(newFormData);
+            validateField(newFormData);
+            setIsInitialized(true);
+        }
+    }, [value, isInitialized]);
 
     const handleCategorySelect = (category: string) => {
         const newFormData = {
@@ -94,7 +91,6 @@ const DailyAllowanceDetailInput: React.FC<DailyAllowanceDetailInputProps> = ({
                 <TouchableOpacity onPress={onRemove} style={{ alignSelf: "flex-end", marginBottom: 10 }}>
                     <Text style={{ fontSize: 18, color: "red" }}>✕</Text>
                 </TouchableOpacity>
-
 
                 {/* 日当区分選択 */}
                 <Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 5 }}>
@@ -177,39 +173,6 @@ const DailyAllowanceDetailInput: React.FC<DailyAllowanceDetailInputProps> = ({
                         </View>
                     </TouchableOpacity>
                 </Modal>
-
-                {/* 日数入力 */}
-                <Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 5 }}>
-                    日数を入力してください
-                </Text>
-                <Input
-                    placeholder="例: 2"
-                    value={formData.numberOfDays}
-                    onChangeText={(text) => handleInputChange('numberOfDays', text)}
-                    containerStyle={{ marginBottom: 0 }}
-                    inputContainerStyle={{
-                        backgroundColor: validationErrors.numberOfDays ? "#ffe6e6" : "white",
-                        borderWidth: 1,
-                        borderColor: validationErrors.numberOfDays ? "red" : "#ddd",
-                        borderRadius: 8,
-                        paddingHorizontal: 10
-                    }}
-                    inputStyle={{ 
-                        paddingHorizontal: 10
-                    }}
-                    keyboardType="numeric"
-                />
-                {validationErrors.numberOfDays && (
-                    <Text style={{ 
-                        color: "red", 
-                        fontSize: 12, 
-                        marginTop: -15,
-                        marginLeft: 10,
-                        marginBottom: 15
-                    }}>
-                        {validationErrors.numberOfDays}
-                    </Text>
-                )}
             </Card>
         </>
     )
