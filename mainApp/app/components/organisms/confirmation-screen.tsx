@@ -17,8 +17,8 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
     return (
         <ScrollView style={{ flex: 1, backgroundColor: 'white' }}>
             <View style={{ padding: 15 }}>
-                <Text h4 style={{ 
-                    textAlign: 'center', 
+                <Text h4 style={{
+                    textAlign: 'center',
                     marginBottom: 20,
                     textDecorationLine: 'underline'
                 }}>
@@ -45,6 +45,26 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                     </Text>
                 </View>
 
+                {/* 出発日 */}
+                <View style={{ marginBottom: 15 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>
+                        出発日：
+                    </Text>
+                    <Text style={{ fontSize: 16, marginLeft: 10 }}>
+                        {formData.departureDate || '未入力'}
+                    </Text>
+                </View>
+
+                {/* 帰着日 */}
+                <View style={{ marginBottom: 20 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>
+                        帰着日：
+                    </Text>
+                    <Text style={{ fontSize: 16, marginLeft: 10 }}>
+                        {formData.returnDate || '未入力'}
+                    </Text>
+                </View>
+
                 {/* 移動した日付と詳細情報 */}
                 <View style={{ marginBottom: 20 }}>
                     <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10 }}>
@@ -52,13 +72,13 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                     </Text>
 
                     {/* 公共交通機関 */}
-                    {formData.publicTransportDetails && formData.publicTransportDetails.length > 0 && (
+                    {formData.publicTransportDetails && formData.publicTransportDetails.length > 0 ? (
                         <View style={{ marginBottom: 15 }}>
-                            <Text style={{ 
-                                fontSize: 14, 
-                                fontWeight: 'bold', 
+                            <Text style={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
                                 color: 'red',
-                                marginBottom: 10 
+                                marginBottom: 10
                             }}>
                                 公共交通機関及び航空機を利用した場合
                             </Text>
@@ -80,16 +100,28 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                                 </Card>
                             ))}
                         </View>
+                    ) : (
+                        <View style={{ marginBottom: 15 }}>
+                            <Text style={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
+                                color: 'red',
+                                marginBottom: 10
+                            }}>
+                                公共交通機関及び航空機を利用した場合
+                            </Text>
+                            <Text style={{ textAlign: 'center', fontSize: 16 }}>なし</Text>
+                        </View>
                     )}
 
                     {/* レンタカーまたは自家用車 */}
                     {formData.carUsageDetails && formData.carUsageDetails.length > 0 ? (
                         <View style={{ marginBottom: 15 }}>
-                            <Text style={{ 
-                                fontSize: 14, 
-                                fontWeight: 'bold', 
+                            <Text style={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
                                 color: 'green',
-                                marginBottom: 10 
+                                marginBottom: 10
                             }}>
                                 レンタカーまたは自家用車を利用した場合
                             </Text>
@@ -127,11 +159,11 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                         </View>
                     ) : (
                         <View style={{ marginBottom: 15 }}>
-                            <Text style={{ 
-                                fontSize: 14, 
-                                fontWeight: 'bold', 
+                            <Text style={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
                                 color: 'green',
-                                marginBottom: 5 
+                                marginBottom: 5
                             }}>
                                 レンタカーまたは自家用車を利用した場合
                             </Text>
@@ -142,10 +174,10 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                     {/* その他の交通手段 */}
                     {formData.otherTransportDetails && formData.otherTransportDetails.length > 0 ? (
                         <View style={{ marginBottom: 15 }}>
-                            <Text style={{ 
-                                fontSize: 14, 
-                                fontWeight: 'bold', 
-                                marginBottom: 10 
+                            <Text style={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
+                                marginBottom: 10
                             }}>
                                 その他の交通手段を利用した場合
                             </Text>
@@ -169,10 +201,10 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                         </View>
                     ) : (
                         <View style={{ marginBottom: 15 }}>
-                            <Text style={{ 
-                                fontSize: 14, 
-                                fontWeight: 'bold', 
-                                marginBottom: 5 
+                            <Text style={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
+                                marginBottom: 5
                             }}>
                                 その他の交通手段を利用した場合
                             </Text>
@@ -198,14 +230,13 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                                     日当区分{index + 1}
                                 </Text>
                                 <Text>区分：{detail.dailyAllowanceCategory || '未入力'}</Text>
-                                <Text>宿泊日数：{detail.numberOfDays || '0'} 泊</Text>
                             </Card>
                         ))}
                     </View>
                 ) : (
                     <View style={{ marginBottom: 20 }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>
-                            日当区分と日数情報：
+                            日当区分情報：
                         </Text>
                         <Text style={{ fontSize: 16, marginLeft: 10 }}>未入力</Text>
                     </View>
@@ -215,7 +246,7 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                 {formData.lodgingDetails && formData.lodgingDetails.length > 0 ? (
                     <View style={{ marginBottom: 20 }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10 }}>
-                            宿泊区分と宿泊日数情報：
+                            宿泊区分情報：
                         </Text>
                         {formData.lodgingDetails.map((detail: any, index: number) => (
                             <Card key={index} containerStyle={{
@@ -228,14 +259,13 @@ const ConfirmationScreen: React.FC<ConfirmationScreenProps> = ({
                                     宿泊区分{index + 1}
                                 </Text>
                                 <Text>区分：{detail.lodgingCategory || '未入力'}</Text>
-                                <Text>宿泊日数：{detail.numberOfDays || '0'} 泊</Text>
                             </Card>
                         ))}
                     </View>
                 ) : (
                     <View style={{ marginBottom: 20 }}>
                         <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>
-                            宿泊区分と宿泊日数情報：
+                            宿泊区分情報：
                         </Text>
                         <Text style={{ fontSize: 16, marginLeft: 10 }}>未入力</Text>
                     </View>

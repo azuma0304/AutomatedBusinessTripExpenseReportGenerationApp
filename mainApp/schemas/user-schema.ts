@@ -127,6 +127,8 @@ export const TravelExpenseFormSchema = z.object({
   purpose: PurposeSchema,
   departureDate: DepartureDateSchema,
   returnDate: ReturnDateSchema,
+  travelDays: z.number().optional(),
+  lodgingDays: z.number().optional(),
   publicTransportDetails: z.array(PublicTransportDetailSchema).optional(),
   carUsageDetails: z.array(CarUsageDetailSchema).optional(),
   otherTransportDetails: z.array(OtherTransportDetailSchema).optional(),

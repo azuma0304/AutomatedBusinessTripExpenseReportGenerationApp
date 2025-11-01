@@ -1,8 +1,8 @@
 import { ThemedText } from "../../components/themed-text";
 import { ThemedView } from "../../components/themed-view";
-import { StyleSheet } from "react-native";
+import { Alert, Platform, StyleSheet } from "react-native";
 
-export default function ListScreen() {
+function ListScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title">一覧</ThemedText>
@@ -17,3 +17,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+export default ListScreen;

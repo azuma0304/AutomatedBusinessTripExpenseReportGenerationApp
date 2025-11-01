@@ -63,8 +63,6 @@ export const submitTravelExpense = async (
       submittedAt: new Date().toISOString(),
     };
 
-    // デバッグ用ログ
-    console.log('GASに送信するデータ:', JSON.stringify(dataToSend, null, 2));
 
     // GAS Web AppにPOSTリクエストを送信
     const response = await fetch(GAS_ENDPOINT_URL, {

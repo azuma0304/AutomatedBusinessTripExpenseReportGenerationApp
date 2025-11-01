@@ -87,6 +87,8 @@ export const useFormManagement = () => {
     purpose: '',
     departureDate: '',
     returnDate: '',
+    travelDays: 0,
+    lodgingDays: 0,
     publicTransportDetails: [],
     carUsageDetails: [],
     otherTransportDetails: [],
@@ -130,6 +132,8 @@ export const useFormManagement = () => {
       purpose: '',
       departureDate: '',
       returnDate: '',
+      travelDays: 0,
+      lodgingDays: 0,
       publicTransportDetails: [],
       carUsageDetails: [],
       otherTransportDetails: [],
@@ -211,10 +215,11 @@ export const useFormManagement = () => {
     if (!departureDate || !returnDate) return;
     
     try {
-      const departure = new Date(departureDate);
-      const returnDateObj = new Date(returnDate);
+      // 日付文字列をYYYY-MM-DD形式に変換してからDateオブジェクトに変換
+      const departure = new Date(departureDate.replace(/\//g, '-'));
+      const returnDateObj = new Date(returnDate.replace(/\//g, '-'));
       
-      const timeDiff = returnDateObj.getTime() - departure.getTime();
+      const timeDiff = returnDateObj.getTime() - departure.getTime() + 1;
       const travelDays = Math.ceil(timeDiff / (24 * 60 * 60 * 1000));
       const lodgingDays = Math.max(0, travelDays - 1);
       
@@ -234,6 +239,8 @@ export const useFormManagement = () => {
       
       setFormData(prev => ({
         ...prev,
+        travelDays,
+        lodgingDays,
         dailyAllowanceDetails: newDailyAllowanceDetails,
         lodgingDetails: newLodgingDetails
       }));
@@ -291,28 +298,43 @@ export const useFormManagement = () => {
    * @param {number} indexToRemove - 削除する項目のインデックス
    */
   const removePublicTransportItem = (indexToRemove: number) => {
-    setPublicTransportEntryIds(publicTransportEntryIds.filter((_, index) => index !== indexToRemove));
-    setPublicTransportDetails(publicTransportDetails.filter((_, index) => index !== indexToRemove));
+    const newEntryIds = publicTransportEntryIds.filter((_, index) => index !== indexToRemove);
+    const newDetails = publicTransportDetails.filter((_, index) => index !== indexToRemove);
+    setPublicTransportEntryIds(newEntryIds);
+    setPublicTransportDetails(newDetails);
+    setFormData(prev => ({ ...prev, publicTransportDetails: newDetails }));
   };
 
   const removeCarUsageItem = (indexToRemove: number) => {
-    setCarUsageEntryIds(carUsageEntryIds.filter((_, index) => index !== indexToRemove));
-    setCarUsageDetails(carUsageDetails.filter((_, index) => index !== indexToRemove));
+    const newEntryIds = carUsageEntryIds.filter((_, index) => index !== indexToRemove);
+    const newDetails = carUsageDetails.filter((_, index) => index !== indexToRemove);
+    setCarUsageEntryIds(newEntryIds);
+    setCarUsageDetails(newDetails);
+    setFormData(prev => ({ ...prev, carUsageDetails: newDetails }));
   };
 
   const removeOtherTransportItem = (indexToRemove: number) => {
-    setOtherTransportEntryIds(otherTransportEntryIds.filter((_, index) => index !== indexToRemove));
-    setOtherTransportDetails(otherTransportDetails.filter((_, index) => index !== indexToRemove));
+    const newEntryIds = otherTransportEntryIds.filter((_, index) => index !== indexToRemove);
+    const newDetails = otherTransportDetails.filter((_, index) => index !== indexToRemove);
+    setOtherTransportEntryIds(newEntryIds);
+    setOtherTransportDetails(newDetails);
+    setFormData(prev => ({ ...prev, otherTransportDetails: newDetails }));
   };
 
   const removeDailyAllowanceItem = (indexToRemove: number) => {
-    setDailyAllowanceEntryIds(dailyAllowanceEntryIds.filter((_, index) => index !== indexToRemove));
-    setDailyAllowanceDetails(dailyAllowanceDetails.filter((_, index) => index !== indexToRemove));
+    const newEntryIds = dailyAllowanceEntryIds.filter((_, index) => index !== indexToRemove);
+    const newDetails = dailyAllowanceDetails.filter((_, index) => index !== indexToRemove);
+    setDailyAllowanceEntryIds(newEntryIds);
+    setDailyAllowanceDetails(newDetails);
+    setFormData(prev => ({ ...prev, dailyAllowanceDetails: newDetails }));
   };
 
   const removeLodgingItem = (indexToRemove: number) => {
-    setLodgingEntryIds(lodgingEntryIds.filter((_, index) => index !== indexToRemove));
-    setLodgingDetails(lodgingDetails.filter((_, index) => index !== indexToRemove));
+    const newEntryIds = lodgingEntryIds.filter((_, index) => index !== indexToRemove);
+    const newDetails = lodgingDetails.filter((_, index) => index !== indexToRemove);
+    setLodgingEntryIds(newEntryIds);
+    setLodgingDetails(newDetails);
+    setFormData(prev => ({ ...prev, lodgingDetails: newDetails }));
   };
 
   /**

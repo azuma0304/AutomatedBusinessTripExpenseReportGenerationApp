@@ -19,7 +19,7 @@ export const ALERT_MESSAGES = {
     DRAFT_UPDATED: '下書きが更新されました。新規作成モードに戻りました。',
     DRAFT_DELETED: '下書きが削除されました',
     DRAFT_DUPLICATED: '下書きが複製されました',
-    SUBMITTED: 'スプレッドシートに保存されました',
+    SUBMITTED: '旅費精算書が発行されました',
   },
   
   // 確認メッセージ
@@ -27,7 +27,7 @@ export const ALERT_MESSAGES = {
     DRAFT_SAVE: '一時保存しますか？',
     DRAFT_UPDATE: '下書きを更新しますか？',
     FINAL_CONFIRM: '入力内容を確認しますか？',
-    SUBMIT_CONFIRM: 'スプレッドシートに送信しますか？',
+    SUBMIT_CONFIRM: '旅費精算書を発行しますか？',
     DELETE_CONFIRM: 'この下書きを削除しますか？',
     EDIT_CONFIRM: 'この下書きを修正しますか？',
     DUPLICATE_CONFIRM: 'この下書きを複製しますか？',
