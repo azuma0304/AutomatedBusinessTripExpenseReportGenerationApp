@@ -39,11 +39,24 @@ function doPost(e) {
     // シートのレイアウトを作成
     createSheetLayout(sheet, data, "1x37-WMX5C5kmcjr4u8gMzwIoaeT3MJL2lQY-Xf57UBo");
 
+    // Googleドキュメントを作成（テンプレートから）
+    const templateDocId = "1NuJG_LJQUr27bnKyCeuuG37kx2xmaTTO6Us2lfs_PQY";
+    // 保存先フォルダID（ここを変更するだけで保存先を変更できます）
+    const SAVE_FOLDER_ID = "19Uh-bv4P_fM5Y1sdyQs4XwezFPX2MaWA"
+    const docId = createDocumentFromTemplate(
+      templateDocId,
+      "1x37-WMX5C5kmcjr4u8gMzwIoaeT3MJL2lQY-Xf57UBo",
+      sheetName,
+      `${sheetName}_出張旅費書`,
+      SAVE_FOLDER_ID
+    );
+
     return ContentService.createTextOutput(
       JSON.stringify({
         status: "success",
         message: "データが正常に保存されました",
-        sheetName: sheetName
+        sheetName: sheetName,
+        documentId: docId
       })
     ).setMimeType(ContentService.MimeType.JSON);
 
@@ -226,7 +239,7 @@ function createSheetLayout(sheet, data, spreadsheetId) {
 
     // 計算処理を実行（日当区分・宿泊区分を書き込む前）
     const transportDetailsLastDataRow = dataStartRow + transportDetails.length - 1; // 明細データの最終行（日当区分の前）
-    
+
     // 交通手段ごとに使用した交通料金諸々の合計計算と書き込み
     transportTotal = transportDetailsCalculateAndWrite(
       spreadsheetId,
@@ -238,7 +251,7 @@ function createSheetLayout(sheet, data, spreadsheetId) {
 
   // 日当・宿泊セクション（交通費明細の下）: 1列に縦積み
   const allowanceStartRow = transportDetailHeaderRow + transportDetails.length + 3; // 3行空けて配置
-  
+
   // 日当・宿泊用のヘッダー行を作成（合計列用）
   const allowanceHeaderRow = allowanceStartRow - 1;
 
@@ -289,7 +302,7 @@ function createSheetLayout(sheet, data, spreadsheetId) {
   // 日当の合計: 見出し(A列) + データ列数(travelDays) + 1 = travelDays + 2列目
   // 宿泊の合計: 日当の合計と同じ列に配置
   const dailyAllowanceTotalCol = travelDays > 0 ? travelDays + 2 : 12; // デフォルトはL列
-  
+
   const allowanceAndLodgingTotals = calculateDailyAllowanceAndLodgingTotals(
     spreadsheetId,
     sheet.getName(),
