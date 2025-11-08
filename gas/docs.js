@@ -41,6 +41,16 @@ function createDocumentFromTemplate(templateDocId, spreadsheetId, sheetName, new
     replacePlaceholders(body, dataMap);
 
     newDoc.saveAndClose();
+    
+    // ドキュメントを「リンクを知っている全員が閲覧可能」に設定
+    const docFile = DriveApp.getFileById(newDocFile.getId());
+    try {
+        docFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    } catch (e) {
+        console.error('ドキュメントの共有設定に失敗しました:', e);
+        // 共有設定に失敗しても処理は続行
+    }
+    
     return newDoc.getId();
 }
 

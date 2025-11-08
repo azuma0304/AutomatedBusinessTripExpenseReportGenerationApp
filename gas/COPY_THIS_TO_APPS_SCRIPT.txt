@@ -1,0 +1,49 @@
+========================================
+このコードをApps Scriptエディタにコピーしてください
+========================================
+
+手順:
+1. https://script.google.com/home/projects/1CHGT7o5yhQl5WwDTmH6Ov07WWa9gvYptoGiHNzni4KDGpKss73lYNtMX/edit を開く
+2. 左側の「main」ファイルをクリック
+3. 85行目から96行目を探す
+4. 以下のコードで置き換える
+5. Ctrl+S で保存
+6. 「デプロイ」→「新しいデプロイ」
+7. ⚙️アイコン → 「ウェブアプリ」のみを選択（ライブラリは選択しない）
+8. 「次のユーザーとして実行: 自分」
+9. 「アクセスできるユーザー: 全員」
+10. 「デプロイ」をクリック
+11. 新しいURLをコピー
+
+========================================
+コピーするコード (85-96行目)
+========================================
+
+/**
+ * CORSヘッダーを追加する共通関数
+ * @param {ContentService.TextOutput} response - レスポンスオブジェクト
+ * @returns {ContentService.TextOutput} - CORSヘッダー付きレスポンス
+ */
+function addCorsHeaders(response) {
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  response.setHeader('Access-Control-Max-Age', '86400');
+  return response;
+}
+
+========================================
+重要: ウェブアプリとしてデプロイ
+========================================
+
+デプロイ時に必ず:
+✅ ウェブアプリ にチェック
+❌ ライブラリ にチェックを入れない
+
+URLは以下の形式になるはず:
+https://script.google.com/macros/s/AKfycby.../exec
+                                            ^^^^
+                                            /execで終わる
+
+========================================
+

@@ -16,6 +16,22 @@ export interface ApiResponse {
   status: 'success' | 'error';
   message?: string;
   data?: any;
+  documentUrl?: string;
+  documentId?: string;
+}
+
+/**
+ * 提出済み旅費書の型定義
+ */
+export interface SubmittedExpense {
+  sheetName: string;
+  documentId: string | null;
+  documentUrl: string | null;
+  destination: string;
+  purpose: string;
+  departureDate: string;
+  returnDate: string;
+  createdAt: string;
 }
 
 /**
@@ -67,14 +83,34 @@ export const submitTravelExpense = async (
     // GAS Web AppにPOSTリクエストを送信
     const response = await fetch(GAS_ENDPOINT_URL, {
       method: 'POST',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(dataToSend),
     });
 
-    // レスポンスをJSON形式でパース
-    const result: ApiResponse = await response.json();
+    // レスポンスのステータスとコンテンツタイプを確認
+    console.log('Response status:', response.status);
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    
+    // レスポンステキストを取得
+    const responseText = await response.text();
+    console.log('Response text (first 500 chars):', responseText.substring(0, 500));
+
+    // JSONとしてパース
+    let result: ApiResponse;
+    try {
+      result = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('JSON Parse Error. Full response:', responseText);
+      
+      // HTMLエラーからエラーメッセージを抽出
+      const errorMatch = responseText.match(/<div style="text-align:center[^>]*>([^<]+)<\/div>/);
+      const gasError = errorMatch ? errorMatch[1] : 'Unknown GAS Error';
+      
+      throw new Error(`GASエラー: ${gasError}`);
+    }
 
     // レスポンスログ
     console.log('GASからのレスポンス:', result);
@@ -111,6 +147,7 @@ export const saveDraft = async (
     // 現在は同じエンドポイントを使用
     const response = await fetch(GAS_ENDPOINT_URL, {
       method: 'POST',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -140,6 +177,7 @@ export const fetchDrafts = async (): Promise<ApiResponse> => {
     // TODO: GET リクエスト用のエンドポイントを実装
     const response = await fetch(`${GAS_ENDPOINT_URL}?action=getDrafts`, {
       method: 'GET',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -160,19 +198,20 @@ export const fetchDrafts = async (): Promise<ApiResponse> => {
 };
 
 /**
- * 提出済み旅費書一覧を取得する（将来的な実装用）
+ * 提出済み旅費書一覧を取得する
  * @returns 提出済み旅費書一覧
  */
-export const fetchSubmittedExpenses = async (): Promise<ApiResponse> => {
+export const fetchSubmittedExpenses = async (): Promise<ApiResponse & { data?: SubmittedExpense[] }> => {
   try {
     const response = await fetch(`${GAS_ENDPOINT_URL}?action=getSubmitted`, {
       method: 'GET',
+      mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    const result: ApiResponse = await response.json();
+    const result: ApiResponse & { data?: SubmittedExpense[] } = await response.json();
     console.log('提出済み一覧取得レスポンス:', result);
 
     return result;

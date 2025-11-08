@@ -9,7 +9,7 @@
  */
 export const API_CONFIG = {
   // GAS Web App URL
-  GAS_ENDPOINT: 'https://script.google.com/macros/s/AKfycbxfT71JyGw4CfTgbbCaimlXyoG2xpLBRLDbtX4DxkgkyemYAEONiFDR-gl3rxB2NQ/exec',
+  GAS_ENDPOINT: 'https://script.google.com/macros/s/AKfycbxi0RHca13prrTTnCozK9HgCBHpI-A5wLcjaOKRucC-ZU84DOLEKvxeLJ8ULXpxP89N/exec',
   
   // タイムアウト設定（ミリ秒）
   TIMEOUT: 30000, // 30秒

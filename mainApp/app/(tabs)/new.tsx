@@ -1,6 +1,6 @@
 import { Button, Card, Input, Text } from "@rneui/themed";
 import React, { useState, useEffect } from "react";
-import { Alert, ScrollView, TouchableOpacity } from "react-native";
+import { Alert, ScrollView, TouchableOpacity, ActivityIndicator, View, Modal } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { TravelExpenseFormSchema, TravelExpenseFormData } from "../../schemas/user-schema";
 import { submitTravelExpense } from "../../services/api";
@@ -38,6 +38,7 @@ import ConfirmationScreen from "../components/organisms/confirmation-screen";
 
 export default function NewScreen() {
   const [showConfirmation, setShowConfirmation] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const route = useRoute();
   const navigation = useNavigation();
   
@@ -257,23 +258,57 @@ export default function NewScreen() {
           return;
         }
 
+        // ローディング開始
+        setLoading(true);
 
         try {
           // API サービスを使用してGASに送信（可視+サニタイズしたデータを送る）
           const result = await submitTravelExpense(validate.data);
 
           if (result.status === "success") {
-            Alert.alert("送信成功", ALERT_MESSAGES.SUCCESS.SUBMITTED);
+            const documentUrl = result.documentUrl;
             
-            // フォームとバリデーションを完全初期化
-            resetForm();
-            setErrors({});
-            setDetailErrors({});
-            // 編集モード由来のパラメータをクリアし、新規作成画面として再表示
-            (navigation as any).navigate('new', {});
-            
-            // 入力画面に戻る
-            setShowConfirmation(false);
+            // プレビューURLがある場合は、プレビューボタンを表示
+            if (documentUrl) {
+              Alert.alert(
+                "送信成功",
+                ALERT_MESSAGES.SUCCESS.SUBMITTED,
+                [
+                  {
+                    text: "OK",
+                    onPress: () => {
+                      resetForm();
+                      setErrors({});
+                      setDetailErrors({});
+                      (navigation as any).navigate('new', {});
+                      setShowConfirmation(false);
+                    }
+                  },
+                  {
+                    text: "プレビューを見る",
+                    onPress: () => {
+                      resetForm();
+                      setErrors({});
+                      setDetailErrors({});
+                      (navigation as any).navigate('preview', { documentUrl });
+                      setShowConfirmation(false);
+                    }
+                  }
+                ]
+              );
+            } else {
+              Alert.alert("送信成功", ALERT_MESSAGES.SUCCESS.SUBMITTED);
+              
+              // フォームとバリデーションを完全初期化
+              resetForm();
+              setErrors({});
+              setDetailErrors({});
+              // 編集モード由来のパラメータをクリアし、新規作成画面として再表示
+              (navigation as any).navigate('new', {});
+              
+              // 入力画面に戻る
+              setShowConfirmation(false);
+            }
           } else {
             Alert.alert(
               "エラー", 
@@ -286,6 +321,9 @@ export default function NewScreen() {
             "通信エラー", 
             "サーバーに接続できませんでした"
           );
+        } finally {
+          // ローディング終了
+          setLoading(false);
         }
       }
     );
@@ -302,6 +340,30 @@ export default function NewScreen() {
             onEdit={handleEdit}
             onConfirm={handleConfirm}
           />
+          
+          {/* ローディングモーダル */}
+          <Modal
+            transparent={true}
+            visible={loading}
+            animationType="fade"
+          >
+            <View style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            }}>
+              <View style={{
+                backgroundColor: 'white',
+                padding: 30,
+                borderRadius: 10,
+                alignItems: 'center'
+              }}>
+                <ActivityIndicator size="large" color="#4A90E2" />
+                <Text style={{ marginTop: 15, fontSize: 16 }}>送信中...</Text>
+              </View>
+            </View>
+          </Modal>
         </SafeAreaView>
       </SafeAreaProvider>
     );

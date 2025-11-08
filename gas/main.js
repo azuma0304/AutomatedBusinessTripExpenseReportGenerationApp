@@ -51,15 +51,134 @@ function doPost(e) {
       SAVE_FOLDER_ID
     );
 
+    // プレビューURLを生成
+    const documentUrl = `https://docs.google.com/document/d/${docId}/preview`;
+
     return ContentService.createTextOutput(
       JSON.stringify({
         status: "success",
         message: "データが正常に保存されました",
         sheetName: sheetName,
-        documentId: docId
+        documentId: docId,
+        documentUrl: documentUrl
       })
     ).setMimeType(ContentService.MimeType.JSON);
 
+  } catch (err) {
+    console.error("エラー:", err);
+    return ContentService.createTextOutput(
+      JSON.stringify({
+        status: "error",
+        message: err.toString(),
+        stack: err.stack
+      })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * OPTIONSリクエストハンドラー（プリフライトリクエスト対応）
+ * Google Apps ScriptのWeb Appは自動的にCORSを処理します
+ */
+function doOptions(e) {
+  // 空のJSONレスポンスを返す
+  return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+ * GETリクエストハンドラー
+ * 提出済み旅費書一覧を取得
+ */
+function doGet(e) {
+  try {
+    const action = e.parameter.action;
+    
+    if (action === 'getSubmitted') {
+      // スプレッドシートを開く
+      const spreadsheet = SpreadsheetApp.openById("1x37-WMX5C5kmcjr4u8gMzwIoaeT3MJL2lQY-Xf57UBo");
+      const sheets = spreadsheet.getSheets();
+      
+      const submittedExpenses = [];
+      
+      // 各シートをチェック
+      sheets.forEach((sheet) => {
+        const sheetName = sheet.getName();
+        
+        // シート名が「日付_目的地_出張旅費書」のパターンかチェック
+        // または「日付_目的地」のパターンかチェック
+        if (sheetName.includes('_出張旅費書') || sheetName.match(/^\d{4}\/\d{2}\/\d{2}_/)) {
+          try {
+            // シートの基本情報を読み取る
+            const basicBlock = sheet.getRange(1, 1, 2, 2).getValues();
+            const destination = basicBlock[0][1] || '';
+            const purpose = basicBlock[1][1] || '';
+            
+            const daysBlock = sheet.getRange(4, 1, 2, 4).getValues();
+            const departureDate = daysBlock[0][1] || '';
+            const returnDate = daysBlock[1][1] || '';
+            
+            // シート名からドキュメント名を推測（「シート名_出張旅費書」）
+            const docName = sheetName.includes('_出張旅費書') ? sheetName : `${sheetName}_出張旅費書`;
+            
+            // ドキュメントを検索（名前で検索）
+            const files = DriveApp.getFilesByName(docName);
+            let documentId = null;
+            let documentUrl = null;
+            
+            if (files.hasNext()) {
+              const file = files.next();
+              documentId = file.getId();
+              
+              // ドキュメントが共有設定されているか確認し、共有設定を追加
+              try {
+                file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+              } catch (shareError) {
+                console.error('共有設定エラー:', shareError);
+              }
+              
+              documentUrl = `https://docs.google.com/document/d/${documentId}/preview`;
+            }
+            
+            submittedExpenses.push({
+              sheetName: sheetName,
+              documentId: documentId,
+              documentUrl: documentUrl,
+              destination: destination,
+              purpose: purpose,
+              departureDate: departureDate,
+              returnDate: returnDate,
+              createdAt: sheet.getRange(1, 1).getValue() || new Date().toISOString()
+            });
+          } catch (sheetError) {
+            console.error(`シート ${sheetName} の処理エラー:`, sheetError);
+            // エラーが発生したシートはスキップ
+          }
+        }
+      });
+      
+      // 作成日時でソート（新しい順）
+      submittedExpenses.sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0);
+        const dateB = new Date(b.createdAt || 0);
+        return dateB - dateA;
+      });
+      
+      return ContentService.createTextOutput(
+        JSON.stringify({
+          status: "success",
+          data: submittedExpenses
+        })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    return ContentService.createTextOutput(
+      JSON.stringify({
+        status: "error",
+        message: "不明なアクション"
+      })
+    ).setMimeType(ContentService.MimeType.JSON);
+    
   } catch (err) {
     console.error("エラー:", err);
     return ContentService.createTextOutput(
