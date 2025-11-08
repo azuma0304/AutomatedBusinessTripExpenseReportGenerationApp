@@ -155,6 +155,6 @@ eas update --branch main --message "bugfix"
 
 アプリケーションQR
 
-<img width="201" height="188" alt="{996EB3B6-5931-4A0E-AF31-FFCD812F21A9}" src="https://github.com/user-attachments/assets/1920605e-9388-4573-82e7-f893ab76bc46" />
+<img width="201" height="188" alt="{996EB3B6-5931-4A0E-AF31-FFCD812F21A9}" src="https://qr.expo.dev/eas-update?slug=exp&projectId=1b9edaa1-7a39-4da8-9719-7860a2b33440&groupId=8e45dbfa-6ea9-419b-9397-dac5af47f061&host=u.expo.dev" />
 
 
