@@ -64,7 +64,7 @@ export const useDraftManagement = () => {
    * @param {Function} onConfirm - 確認時のコールバック関数
    */
   const showConfirmDialog = (title: string, message: string, onConfirm: () => void) => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
       if (window.confirm(`${title}\n${message}`)) {
         onConfirm();
       }

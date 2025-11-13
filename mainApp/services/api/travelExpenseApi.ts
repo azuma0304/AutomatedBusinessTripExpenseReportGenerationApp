@@ -85,7 +85,7 @@ export const submitTravelExpense = async (
       method: 'POST',
       mode: 'cors',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
       body: JSON.stringify(dataToSend),
     });
@@ -149,7 +149,7 @@ export const saveDraft = async (
       method: 'POST',
       mode: 'cors',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
       body: JSON.stringify(dataToSend),
     });
@@ -179,7 +179,7 @@ export const fetchDrafts = async (): Promise<ApiResponse> => {
       method: 'GET',
       mode: 'cors',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
     });
 
@@ -207,7 +207,7 @@ export const fetchSubmittedExpenses = async (): Promise<ApiResponse & { data?: S
       method: 'GET',
       mode: 'cors',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
     });
 

@@ -1,6 +1,5 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,7 +18,23 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// AnalyticsはWeb環境（ブラウザ）でのみ動的インポートして初期化
+// SSR環境やReact Native環境では初期化しない
+if (typeof window !== 'undefined') {
+  // 動的インポートを使用して、モジュール読み込み時のwindow参照を回避
+  import("firebase/analytics").then(({ getAnalytics }) => {
+    try {
+      getAnalytics(app);
+    } catch (error) {
+      // Analyticsの初期化に失敗した場合（例：モバイル環境など）
+      console.log('Firebase Analytics is not available in this environment');
+    }
+  }).catch((error) => {
+    // 動的インポートに失敗した場合（例：モバイル環境など）
+    console.log('Firebase Analytics module could not be loaded');
+  });
+}
 
 // 認証インスタンスをエクスポート
 export const auth = getAuth(app);

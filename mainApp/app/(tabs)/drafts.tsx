@@ -50,7 +50,7 @@ export default function DraftsScreen() {
 
   // ブラウザ対応の確認ダイアログ
   const showConfirmDialog = (title: string, message: string, onConfirm: () => void) => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
       if (window.confirm(`${title}\n${message}`)) {
         onConfirm();
       }

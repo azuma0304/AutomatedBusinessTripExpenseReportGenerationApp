@@ -4,7 +4,7 @@ import { Alert, Platform } from 'react-native'
 
 const ReceiptInput = () => {
     const showConfirmDialog = (title: string, message: string) => {
-        if (Platform.OS === 'web') {
+        if (Platform.OS === 'web' && typeof window !== 'undefined') {
             if (window.confirm(`${title}\n${message}`)) {
                 // ユーザーがOKをクリックした場合の処理
                 // 開発途中なので何もしない
