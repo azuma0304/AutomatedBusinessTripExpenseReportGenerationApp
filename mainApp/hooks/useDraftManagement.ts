@@ -77,6 +77,55 @@ export const useDraftManagement = () => {
   };
 
   /**
+   * 送信成功時のアラート表示関数（Web対応）
+   * 
+   * Webとモバイルで異なるアラートを表示します。
+   * Webではwindow.alertを使用し、モバイルではAlert.alertを使用します。
+   * 複数ボタンにも対応します。
+   * 
+   * @param {string} title - アラートのタイトル
+   * @param {string} message - アラートのメッセージ
+   * @param {Array} buttons - ボタンの配列（オプション）
+   * @param {string} buttons[].text - ボタンのテキスト
+   * @param {Function} buttons[].onPress - ボタンクリック時のコールバック関数
+   */
+  const showSuccessAlert = (
+    title: string,
+    message: string,
+    buttons?: Array<{ text: string; onPress?: () => void }>
+  ) => {
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      // Webの場合
+      if (buttons && buttons.length > 1) {
+        // 複数ボタンの場合（例：「OK」と「プレビューを見る」）
+        const button1Text = buttons[0]?.text || 'アクション名';
+        const button2Text = buttons[1]?.text || 'アクション';
+        const choice = window.confirm(
+          `${title}\n\n${message}\n\n「OK」をクリック: ${button1Text}\n「キャンセル」をクリック: ${button2Text}`
+        );
+        if (choice && buttons[0]?.onPress) {
+          buttons[0].onPress();
+        } else if (!choice && buttons[1]?.onPress) {
+          buttons[1].onPress();
+        }
+      } else {
+        // 単一ボタンまたはボタンなしの場合
+        window.alert(`${title}\n\n${message}`);
+        if (buttons && buttons[0]?.onPress) {
+          buttons[0].onPress();
+        }
+      }
+    } else {
+      // モバイルの場合
+      if (buttons && buttons.length > 0) {
+        Alert.alert(title, message, buttons);
+      } else {
+        Alert.alert(title, message);
+      }
+    }
+  };
+
+  /**
    * 下書きデータでフォームを初期化するuseEffect
    * 
    * ナビゲーションパラメータの変更を監視し、
@@ -248,6 +297,7 @@ export const useDraftManagement = () => {
     editingDraftId,    // 編集中の下書きID
     saveDraft,         // 下書き保存関数
     updateDraft,       // 下書き更新関数
-    showConfirmDialog  // 確認ダイアログ表示関数
+    showConfirmDialog, // 確認ダイアログ表示関数
+    showSuccessAlert   // 送信成功時のアラート表示関数（Web対応）
   };
 };

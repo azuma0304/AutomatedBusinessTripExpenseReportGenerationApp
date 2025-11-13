@@ -43,7 +43,7 @@ export default function NewScreen() {
   const navigation = useNavigation();
   
   // カスタムフックを使用
-  const { isEditMode, saveDraft, updateDraft, showConfirmDialog } = useDraftManagement();
+  const { isEditMode, saveDraft, updateDraft, showConfirmDialog, showSuccessAlert } = useDraftManagement();
   const {
     formData,
     setFormData,
@@ -270,7 +270,7 @@ export default function NewScreen() {
             
             // プレビューURLがある場合は、プレビューボタンを表示
             if (documentUrl) {
-              Alert.alert(
+              showSuccessAlert(
                 "送信成功",
                 ALERT_MESSAGES.SUCCESS.SUBMITTED,
                 [
@@ -297,17 +297,21 @@ export default function NewScreen() {
                 ]
               );
             } else {
-              Alert.alert("送信成功", ALERT_MESSAGES.SUCCESS.SUBMITTED);
-              
-              // フォームとバリデーションを完全初期化
-              resetForm();
-              setErrors({});
-              setDetailErrors({});
-              // 編集モード由来のパラメータをクリアし、新規作成画面として再表示
-              (navigation as any).navigate('new', {});
-              
-              // 入力画面に戻る
-              setShowConfirmation(false);
+              showSuccessAlert("送信成功", ALERT_MESSAGES.SUCCESS.SUBMITTED, [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    // フォームとバリデーションを完全初期化
+                    resetForm();
+                    setErrors({});
+                    setDetailErrors({});
+                    // 編集モード由来のパラメータをクリアし、新規作成画面として再表示
+                    (navigation as any).navigate('new', {});
+                    // 入力画面に戻る
+                    setShowConfirmation(false);
+                  }
+                }
+              ]);
             }
           } else {
             Alert.alert(
