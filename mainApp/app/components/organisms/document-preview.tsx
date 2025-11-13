@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Platform, Linking } from 'react-native';
 // @ts-ignore - react-native-webviewの型定義が未インストールの場合
 import { WebView } from 'react-native-webview';
-import { Card, Text } from '@rneui/themed';
+import { Button, Card, Text } from '@rneui/themed';
 
 interface DocumentPreviewProps {
   documentUrl: string;
@@ -22,6 +22,43 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ documentUrl }) => {
     setError('ドキュメントの読み込みに失敗しました');
     setLoading(false);
   };
+
+  //web環境ではブラウザで開く
+  const handleOpenInBrowser = async () => {
+    try {
+      const supported = await Linking.canOpenURL(documentUrl);
+      if (supported) {
+        await Linking.openURL(documentUrl);
+      } else {
+        setError('このURLを開くことは出来ません');
+      }
+    } catch (error) {
+      console.log('URLの取得に失敗しました');
+      setError('ブラウザで開けませんでした');
+    }
+  };
+
+  // Web環境での表示
+  if (Platform.OS === 'web') {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#fff', padding: 20 }}>
+        <Card containerStyle={{ marginBottom: 20 }}>
+          <View style={{ marginTop: 20, height: 600 }}>
+            <iframe
+              src={documentUrl}
+              style={{
+                width: '100%',
+                height: '100%',
+                border: '1px solid #ddd',
+                borderRadius: 8,
+              }}
+              title="Document Preview"
+            />
+          </View>
+        </Card>
+      </View>
+    );
+  }
 
   if (error) {
     return (
@@ -53,6 +90,7 @@ const DocumentPreview: React.FC<DocumentPreviewProps> = ({ documentUrl }) => {
           <Text style={{ marginTop: 10, fontSize: 16, color: '#666' }}>読み込み中...</Text>
         </View>
       )}
+
       <WebView
         source={{ uri: documentUrl }}
         style={{ flex: 1 }}
