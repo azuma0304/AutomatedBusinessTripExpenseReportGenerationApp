@@ -1,6 +1,5 @@
-import { Redirect } from "expo-router";
+import AuthScreen from "@/app/components/organisms/auth-screen";
 
-// 初期ページをnewタブにリダイレクト
 export default function Index() {
-  return <Redirect href="/(tabs)/new" />;
+  return <AuthScreen />;
 }
